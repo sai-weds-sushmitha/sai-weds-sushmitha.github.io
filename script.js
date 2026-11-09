@@ -6,7 +6,7 @@
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const ease = t => 1 - Math.pow(1 - t, 3);
 
-  /* ================= deferred images (journey paintings) ================= */
+  /* ================= deferred images ================= */
   let deferredDone = false;
   const loadDeferred = () => {
     if (deferredDone) return; deferredDone = true;
@@ -34,6 +34,14 @@
     };
     anim = requestAnimationFrame(step);
   };
+  // ribbon: --u 0 (tied) .. 1 (untied)
+  const tie = $('#tie'); let u = 0, uAnim = null;
+  const setU = v => { u = v; tie && tie.style.setProperty('--u', v.toFixed(3)); };
+  const tweenU = (target, dur, done) => {
+    cancelAnimationFrame(uAnim); const from = u, t0 = performance.now();
+    const step = t => { const k = clamp((t - t0) / dur); setU(from + (target - from) * ease(k)); if (k < 1) uAnim = requestAnimationFrame(step); else done && done(); };
+    uAnim = requestAnimationFrame(step);
+  };
   const finish = () => {
     if (opened) return; opened = true; mark(true); window.__music && window.__music();
     let doneOnce = false;
@@ -42,30 +50,33 @@
       gate.classList.add('done'); body.classList.add('open'); body.classList.remove('locked');
       scrollTo(0, 0); setTimeout(() => gate.remove(), 800); loadDeferred();
     };
-    tweenTo(full, 650, () => {
+    const unroll = () => tweenTo(full, 650, () => {
       const t = setTimeout(reveal, 350);
       const skip = () => { clearTimeout(t); reveal(); };
       gate.addEventListener('wheel', skip, { once: true, passive: true });
       gate.addEventListener('touchstart', skip, { once: true, passive: true });
       gate.addEventListener('pointerdown', skip, { once: true });
     });
+    if (u >= 1) unroll();
+    else { tweenU(1, Math.round(520 * (1 - u)) + 80); setTimeout(unroll, Math.round(300 * (1 - u))); }
   };
   sizeScroll(); addEventListener('resize', () => gate.isConnected && sizeScroll());
 
-  let y0 = 0, ph0 = 0, moved = 0, drag = false;
+  const UNTIE = 70;   // first 70px of the pull unties the bow, the rest unrolls
+  let y0 = 0, moved = 0, drag = false;
   scroll.addEventListener('pointerdown', e => {
-    if (opened) return; drag = true; moved = 0; y0 = e.clientY; ph0 = ph; cancelAnimationFrame(anim);
+    if (opened) return; drag = true; moved = 0; y0 = e.clientY; cancelAnimationFrame(anim); cancelAnimationFrame(uAnim);
     scroll.setPointerCapture(e.pointerId);
   });
   scroll.addEventListener('pointermove', e => {
     if (!drag || opened) return;
-    const dy = e.clientY - y0; moved = Math.max(moved, Math.abs(dy));
-    setPh(clamp(ph0 + Math.abs(dy) * 1.25, 0, full)); mark(ph > 6);
+    const dy = Math.max(0, e.clientY - y0); moved = Math.max(moved, Math.abs(e.clientY - y0));
+    setU(clamp(dy / UNTIE)); setPh(clamp((dy - UNTIE) * 1.25, 0, full)); mark(dy > 6);
   });
   const up = () => {
     if (!drag || opened) return; drag = false;
-    if (moved < 6 || ph > full * 0.28) finish();
-    else tweenTo(0, 500, () => mark(false));
+    if (moved < 6 || u > .5) finish();
+    else { tweenU(0, 400); tweenTo(0, 400, () => mark(false)); }
   };
   scroll.addEventListener('pointerup', up); scroll.addEventListener('pointercancel', up);
   // swipe anywhere on the gate also works
@@ -160,83 +171,70 @@
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .15, rootMargin: '0px 0px -6% 0px' });
   $$('.reveal').forEach(el => io.observe(el));
 
-  /* ================= THE JOURNEY: through the train window ================= */
-  const J = $('#journey'), route = $('.route'), carriage = $('#carriage');
-  const rail = $('#rail'), train = $('#train'), stopsBox = $('#stops');
-  const wrod = $('#wrod'), jNextLbl = $('#jNextLbl'), scenes = $$('#scenes .scene'), board = $('#board'), bTe = $('#bTe'), bEn = $('#bEn'), jLine = $('#jLine');
-  const ST = [
-    ['వరంగల్', 'Warangal', 'Where his story begins, beneath the Kakatiya gateway'],
-    ['రామప్ప', 'Ramappa', 'Stone that dances, and the Perini Shiva Thandavam'],
-    ['రాజమండ్రి', 'Rajahmundry', 'Across the Godavari, every road travelled together'],
-    ['కోనసీమ', 'Konaseema', 'Banana leaves, full plates, fuller hearts'],
-    ['కైలాసగిరి', 'Kailasagiri', 'Shiva and Shakthi, watching over the bay'],
-    ['విశాఖపట్నం', 'Visakhapatnam', 'Where the lighthouse glows, two souls meet']
-  ];
-  const N = ST.length - 1, L = rail.getTotalLength();
-  const stopEls = ST.map((t, i) => { const s = document.createElement('i'); s.className = 'stop'; if (i === 0) s.innerHTML = '<span>Warangal</span>'; if (i === ST.length - 1) s.innerHTML = '<span>Vizag</span>'; stopsBox.appendChild(s); return s; });
-  let vh = innerHeight, rw = 0, rh = 0, cur = 0;
-  const pt = f => { const q = rail.getPointAtLength(clamp(f) * L); return [q.x / 1000 * rw, q.y / 90 * rh]; };
-  const layoutJ = () => {
-    vh = innerHeight; rw = route.clientWidth; rh = route.clientHeight;
-    stopEls.forEach((s, i) => { const [x, y] = pt(i / N); s.style.left = x + 'px'; s.style.top = y + 'px'; });
-  };
-  const smooth = t => t * t * (3 - 2 * t);
-  const setStation = i => {
-    if (i === cur) return; cur = i;
-    board.classList.add('flip'); jLine.classList.add('swap');
-    setTimeout(() => { bTe.textContent = ST[i][0]; bEn.textContent = ST[i][1]; jLine.textContent = ST[i][2]; jNextLbl.textContent = i < N ? 'Next stop · ' + ST[i + 1][1] : 'You have arrived'; board.classList.remove('flip'); jLine.classList.remove('swap'); }, 260);
-    $('#jPrev').disabled = i === 0; $('#jNext').disabled = i === N;
-  };
-
-  const pars = $$('[data-par]');
-  let ticking = false;
-  const update = () => {
-    ticking = false;
-    const r = J.getBoundingClientRect();
-    const p = clamp(-r.top / ((r.height - vh) || 1));
-    // train moves continuously; between stations the next painting unrolls down over the window
-    const f = p * N, k = Math.min(N - 1, Math.floor(f)), u = f - k;
-    const m = f >= N ? 1 : (u < .3 ? 0 : u > .7 ? 1 : smooth((u - .3) / .4));
-    const pos = f;
-    scenes.forEach((sc, i) => {
-      let vis = false, clip = 'none', z = 1;
-      if (i === k) { vis = m < 1; }
-      if (i === k + 1) { vis = m > 0; z = 2; clip = m < 1 ? `inset(0 0 ${(1 - m) * 100}% 0)` : 'none'; }
-      if (f >= N && i === N) { vis = true; clip = 'none'; z = 2; }
-      if (i === k && f >= N) vis = false;
-      sc.style.visibility = vis ? 'visible' : 'hidden'; sc.style.zIndex = z; sc.style.clipPath = clip; sc.style.webkitClipPath = clip;
-      sc.style.transform = 'none'; sc.style.filter = (i === k && m > 0 && m < 1) ? `brightness(${1 - m * .35})` : 'none';
-      if (vis) {
-        const local = i === k ? u : (i === k + 1 ? u - 1 : 0);   // -1..1 around the station
-        sc.firstChild.style.transform = `scale(1.38) translateY(${local * -1.6}%)`;
-      }
-    });
-    const rolling = m > 0 && m < 1 && f < N;
-    wrod.style.opacity = rolling ? 1 : 0;
-    wrod.style.top = `calc(${m * 100}% - 9px)`;
-    const fr = clamp(pos / N), [x, y] = pt(fr), [x2, y2] = pt(fr + .01), [x0, y0] = pt(fr - .01);
-    train.style.transform = `translate(${x}px,${y}px) rotate(${Math.atan2(y2 - y0, x2 - x0) * 57.3 * .8}deg)`;
-    const idx = Math.round(pos);
-    stopEls.forEach((s, i) => { s.classList.toggle('on', i <= pos + .01); s.classList.toggle('cur', i === idx); });
-    setStation(idx);
-    pars.forEach(el => { const b = el.getBoundingClientRect(); el.style.translate = `0 ${(b.top + b.height / 2 - vh / 2) * -(+el.dataset.par)}px`; });
-  };
-  const goStation = i => {
-    i = clamp(i, 0, N); const span = J.offsetHeight - innerHeight;
-    const f = i;
-    scrollTo({ top: J.offsetTop + span * (f / N), behavior: reduce ? 'auto' : 'smooth' });
-  };
-  $('#jPrev').addEventListener('click', () => goStation(cur - 1));
-  $('#jNext').addEventListener('click', () => goStation(cur + 1));
-  stopEls.forEach((s, i) => { s.setAttribute('role', 'button'); s.setAttribute('aria-label', 'Go to ' + ST[i][1]); s.addEventListener('click', () => goStation(i)); });
-  $('#jPrev').disabled = true;
-  const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
-  const relayout = () => { layoutJ(); update(); };
-  addEventListener('scroll', onScroll, { passive: true });
-  addEventListener('resize', relayout);
-  addEventListener('load', relayout);
-  document.fonts && document.fonts.ready.then(relayout);
-  relayout();
+  /* ================= THE JOURNEY: flight map, Warangal ∞ Vizag ================= */
+  (() => {
+    const J = $('#journey'), frame = $('#mapFrame'), world = $('#mapWorld'); if (!J || !frame) return;
+    const plane = $('#plane'), pinW = $('#pinW'), pinV = $('#pinV'), trail = $('#infTrail'), ghost = $('#infGhost');
+    const mWhen = $('#mWhen'), mWhat = $('#mWhat'), cap = $('#mCap');
+    // infinity (lemniscate) whose two ends are the two cities, in map pixels (1600x1200)
+    const W = [430, 561], V = [1215, 615], C = [(W[0] + V[0]) / 2, (W[1] + V[1]) / 2];
+    const A = Math.hypot(V[0] - W[0], V[1] - W[1]) / 2, TH = Math.atan2(V[1] - W[1], V[0] - W[0]), LOBE = 1.3;
+    const M = 480, PTS = [];
+    for (let i = 0; i <= M; i++) {   // s 0..1 : W -> (up over west lobe) -> centre -> V -> (up over east lobe) -> centre -> W
+      const t = Math.PI + 2 * Math.PI * i / M, sn = Math.sin(t), cs = Math.cos(t), d = 1 + sn * sn;
+      const lx = A * cs / d, ly = -LOBE * A * sn * cs / d;
+      PTS.push([C[0] + lx * Math.cos(TH) - ly * Math.sin(TH), C[1] + lx * Math.sin(TH) + ly * Math.cos(TH)]);
+    }
+    const dOf = n => 'M' + PTS.slice(0, n + 1).map(q => q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join('L');
+    ghost.setAttribute('d', dOf(M) + 'Z');
+    const at = s => { const f = clamp(s) * M, i = Math.min(M - 1, Math.floor(f)), k = f - i; const a = PTS[i], b = PTS[i + 1]; return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, Math.atan2(b[1] - a[1], b[0] - a[0])]; };
+    const layout = () => {
+      const fw = frame.clientWidth, fh = frame.clientHeight, sc = Math.max(fw / 1600, fh / 1200, Math.min(fw / 1150, fh / 540));
+      frame.style.setProperty('--k', sc.toFixed(3));
+      const ww = 1600 * sc, wh = 1200 * sc;
+      world.style.width = ww + 'px'; world.style.height = wh + 'px';
+      world.style.left = clamp(fw / 2 - C[0] * sc, fw - ww, 0) + 'px'; world.style.top = clamp(fh / 2 - 600 * sc, fh - wh, 0) + 'px';
+    };
+    const sm = t => t * t * (3 - 2 * t);
+    const CAP = [
+      ['Where his story begins', 'Warangal, city of the Kakatiyas'],
+      ['11 – 13 December', 'Flying to the coast for the wedding'],
+      ['Sangeet · Haldi · Mehendi · Wedding', 'Visakhapatnam, by the sea'],
+      ['16 December', 'Home to Warangal for the reception'],
+      ['Two cities, two souls', 'one infinite journey']
+    ];
+    let stage = -1, vDrop = false, wDrop = false, ticking = false;
+    const setStage = n => {
+      if (n === stage) return; stage = n; cap.classList.add('swap');
+      setTimeout(() => { mWhen.textContent = CAP[n][0]; mWhat.textContent = CAP[n][1]; cap.classList.remove('swap'); }, 220);
+    };
+    const update = () => {
+      ticking = false;
+      const r = J.getBoundingClientRect(), vh = innerHeight;
+      if (!wDrop && r.top < vh * .45) { wDrop = true; pinW.classList.add('drop'); }
+      const p = clamp(-r.top / ((r.height - vh) || 1));
+      // 0-.08 rest at Warangal | .08-.44 fly out | .44-.56 land in Vizag | .56-.92 fly home | .92-1 infinity complete
+      const s = p < .08 ? 0 : p < .44 ? .5 * sm((p - .08) / .36) : p < .56 ? .5 : p < .92 ? .5 + .5 * sm((p - .56) / .36) : 1;
+      const n = Math.round(s * M);
+      trail.setAttribute('d', n > 0 ? dOf(n) : 'M0 0');
+      const [x, y, ang] = at(s), leg = s < .5 ? s * 2 : (s - .5) * 2, fly = (s > 0 && s < .5) || (s > .5 && s < 1);
+      const lift = fly ? Math.sin(Math.PI * leg) : 0;
+      plane.style.left = (x / 16) + '%'; plane.style.top = (y / 12) + '%';
+      plane.style.transform = `translate(-50%,-50%) rotate(${ang * 57.2958}deg) scale(${.78 + lift * .42})`;
+      plane.style.filter = `drop-shadow(${4 + lift * 14}px ${6 + lift * 18}px ${3 + lift * 5}px rgba(40,15,0,${.45 - lift * .2}))`;
+      plane.classList.toggle('rest', !fly);
+      const atV = s >= .5;
+      if (atV !== vDrop) { vDrop = atV; pinV.classList.toggle('drop', atV); }
+      frame.classList.toggle('done', s >= 1);
+      setStage(s >= 1 ? 4 : s > .5 ? 3 : s === .5 ? 2 : s > 0 ? 1 : 0);
+    };
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+    const relayout = () => { layout(); update(); };
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', relayout);
+    addEventListener('load', relayout);
+    relayout();
+  })();
 
   /* ================= calendar + maps buttons ================= */
   const ua = navigator.userAgent, apple = /iPhone|iPad|iPod|Macintosh/.test(ua) && !/Android/.test(ua);
