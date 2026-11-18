@@ -38,35 +38,45 @@
   const lerpT = (arr, f) => { if (f <= CT[0]) return arr[0]; const n = CT.length - 1; if (f >= CT[n]) return arr[n];
     let i = 0; while (CT[i + 1] < f) i++; const u = (f - CT[i]) / (CT[i + 1] - CT[i]); return arr[i] + (arr[i + 1] - arr[i]) * u; };
   let ov = null, ovIn = null, geo = null;
+  let tx = 0, ty = 0;                                   // translate currently applied to the copy
   const geom = () => { const W = gate.clientWidth, H = gate.clientHeight, mode = gate.dataset.fit || 'cover';
     let sx = W / 720, sy = H / 1280;
     if (mode === 'cover') sx = sy = Math.max(sx, sy); else if (mode === 'contain') sx = sy = Math.min(sx, sy);
-    geo = { H, sy, dy: (H - 1280 * sy) / 2 }; };
+    geo = Object.assign(geo || {}, { H, sy, dy: (H - 1280 * sy) / 2 }); };
+  // R30: re-lock the copy onto the real names on every frame. Phones change the visible height mid-film (address
+  // bar slides away, rotation, late web font), which moved the real names ~30px while the copy stayed put, so the
+  // names jumped when the film dissolved. Measuring each frame keeps them identical to the end.
+  const relock = () => { if (!ov) return; fitFilm(); geom();
+    const r = hero.querySelector('.hero-inner'), c = ovIn.querySelector('.hero-inner'); if (!r || !c) return;
+    const a = r.getBoundingClientRect(), b = c.getBoundingClientRect();
+    geo.bx = a.left - (b.left - tx); geo.by = a.top - (b.top - ty); };
+  const place = (x, y) => { tx = x; ty = y; ovIn.style.transform = `translate(${x}px, ${y}px)`; };
   const buildOverlay = () => {
     ov = document.createElement('div'); ov.className = 'ov-wrap'; ov.setAttribute('aria-hidden', 'true');
     ovIn = hero.cloneNode(true); ovIn.removeAttribute('id'); ovIn.classList.add('ov-hero');
     ovIn.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
     ovIn.querySelectorAll('canvas').forEach(n => n.remove());
-    ov.appendChild(ovIn); gate.appendChild(ov); geom();
-    // lock the copy onto the page's real names (layouts can differ by a few px on some screens)
-    const r = hero.querySelector('.hero-inner'), c = ovIn.querySelector('.hero-inner');
-    if (r && c) { const a = r.getBoundingClientRect(), b = c.getBoundingClientRect(); geo.bx = a.left - b.left; geo.by = a.top - b.top; }
+    ov.appendChild(ovIn); gate.appendChild(ov); tx = ty = 0; relock();
   };
   const track = (t0) => {
     if (!ov || !gvid) return;
     const f = (t0 != null ? t0 : gvid.currentTime);
     if (f < CT[0] - .01) { ov.style.visibility = 'hidden'; return; }
-    ov.style.visibility = 'visible';
+    ov.style.visibility = 'visible'; relock();
     const top = lerpT(CTOP, f), bot = lerpT(CBOT, f), g = geo;
     const off = (top - 86) * g.sy;                                  // card offset from its final place
     const clipTop = g.dy + (top - 86) * g.sy, clipBot = g.dy + Math.min(bot, 1280) * g.sy;
     ov.style.clipPath = `inset(${Math.max(0, clipTop)}px 0 ${Math.max(0, g.H - clipBot)}px 0)`;
-    ovIn.style.transform = `translate(${g.bx || 0}px, ${off + (g.by || 0)}px)`;
+    place(g.bx || 0, off + (g.by || 0));
   };
   const irisReveal = () => {
     if (revealing) return; revealing = true;
-    if (ov) { gvid && (gvid.currentTime = gvid.duration || gvid.currentTime); ov.style.clipPath = 'none'; ovIn.style.transform = `translate(${geo.bx || 0}px, ${geo.by || 0}px)`; ov.style.visibility = 'visible'; }
+    if (ov) { gvid && (gvid.currentTime = gvid.duration || gvid.currentTime); ov.style.clipPath = 'none'; ov.style.visibility = 'visible'; }
     body.classList.add('open', 'printed'); body.classList.remove('locked'); scrollTo(0, 0); loadDeferred();
+    if (ov) { relock(); place(geo.bx || 0, geo.by || 0);
+      // keep it locked through the dissolve too (unlocking can show a scrollbar or move the address bar)
+      const hold = () => { if (!gate.isConnected) return; relock(); place(geo.bx || 0, geo.by || 0); requestAnimationFrame(hold); };
+      requestAnimationFrame(hold); }
     gate.classList.add('soft');                        // identical picture underneath: names stay put, film dissolves
     const quick = () => { if (window.scrollY > 2 && gate.isConnected) { gate.style.transition = 'none'; gate.style.visibility = 'hidden'; removeEventListener('scroll', quick); } };
     addEventListener('scroll', quick, { passive: true });   // page scrolled during the dissolve: clear the film at once (no double names)
