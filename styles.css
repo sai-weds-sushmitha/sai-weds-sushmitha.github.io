@@ -489,3 +489,484 @@ p{text-wrap:pretty}
 @media (min-width:900px){.carriage{--wh:max(260px,min(calc(100svh - 310px),640px))}}
 @media (max-height:700px) and (orientation:portrait){.carriage{--wh:max(200px,min(calc((100vw - 56px) * 4 / 3),calc(100svh - 410px)))}}
 @media (max-height:520px) and (orientation:landscape){.carriage{--wh:calc(100svh - 150px)}.j-sticky{padding-top:14px}}
+
+/* ===== Round 10: silk ribbon bow tied around the scroll (untie, then unroll) ===== */
+.tie{--u:0;--bw:clamp(150px,42vw,190px);position:absolute;left:50%;top:10px;width:0;height:0;z-index:5}
+.rib{position:absolute;left:-12px;width:24px;border-radius:1px;
+  background:linear-gradient(90deg,#9c7330 0,#d9b46a 1.5px,#f0e2c2 2.5px,#fffaf0 30%,#ead8b0 58%,#f8eed8 82%,#d9b46a calc(100% - 1.5px),#9c7330 100%);
+  box-shadow:0 2px 5px rgba(0,0,0,.35)}
+.rib.r1{top:-40px;height:40px;transform:translateY(calc(var(--u) * -70px));opacity:calc(1 - var(--u) * 1.2)}
+.rib.r2{top:0;height:40px;transform:translateY(calc(var(--u) * 80px));opacity:calc(1 - var(--u) * 1.2)}
+.bowsway{position:absolute;left:0;top:0;width:0;height:0;transform-origin:0 0;animation:bowSway 3.6s ease-in-out infinite}
+@keyframes bowSway{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.2deg)}}
+.bow{position:absolute;top:calc(var(--bw) * -0.264);height:auto;filter:drop-shadow(0 8px 10px rgba(0,0,0,.45))}
+.bow.bl{left:calc(var(--bw) * -0.5);width:calc(var(--bw) * 0.503);transform-origin:100% 27%;
+  transform:translate(calc(var(--u) * -70px),calc(var(--u) * 60px)) rotate(calc(var(--u) * -48deg));opacity:calc(1 - var(--u) * 1.15)}
+.bow.br{left:calc(var(--bw) * -0.003);width:calc(var(--bw) * 0.503);transform-origin:0 27%;
+  transform:translate(calc(var(--u) * 70px),calc(var(--u) * 60px)) rotate(calc(var(--u) * 48deg));opacity:calc(1 - var(--u) * 1.15)}
+.tie .medal-seal{position:absolute;left:-23px;top:-23px;width:46px;margin:0;animation:sealGlow 2.4s ease-in-out infinite;
+  transform:scale(calc(1 + var(--u) * .4));opacity:calc(1 - var(--u) * 2.2)}
+@keyframes sealGlow{0%,100%{filter:drop-shadow(0 0 0 rgba(240,211,142,0))}50%{filter:drop-shadow(0 0 12px rgba(240,211,142,.8))}}
+.scroll.pulled .tie{opacity:1;transform:none}
+.gate-hint{margin-top:clamp(120px,19vh,150px)}
+.bow{max-width:none}
+.rib.r1{top:-19px;height:19px}.rib.r2{top:0;height:20px}
+.bow.bl{transform:translate(calc(var(--u) * -54px),calc(var(--u) * 90px)) rotate(calc(var(--u) * -38deg)) scale(calc(1 - var(--u) * .25))}
+.bow.br{transform:translate(calc(var(--u) * 54px),calc(var(--u) * 90px)) rotate(calc(var(--u) * 38deg)) scale(calc(1 - var(--u) * .25))}
+
+/* ===== Round 11: vertical painted map, scroll down from Warangal to Vizag ===== */
+.journey.vjour{height:auto;padding:clamp(56px,9vh,96px) 0 clamp(56px,9vh,90px);display:flex;flex-direction:column;align-items:center}
+.vj-head{text-align:center;padding:0 16px;margin-bottom:clamp(18px,3vh,30px)}
+.vm{position:relative;width:100%;max-width:620px;overflow:hidden;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 70px,#000 calc(100% - 90px),transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 70px,#000 calc(100% - 90px),transparent 100%)}
+@media (min-width:660px){.vm{border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.45)}}
+.vm-world{position:absolute;top:0;left:0}
+.vm-world>img{position:absolute;inset:0;width:100%;height:100%;max-width:none;display:block}
+.vm-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.vm-ghost{fill:none;stroke:#5a2a0a;stroke-opacity:.35;stroke-width:2;stroke-dasharray:2 9;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.vm-trail{fill:none;stroke:#a51d17;stroke-width:3.2;stroke-dasharray:11 8;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.vpin{position:absolute;width:calc(38px * var(--s,1));aspect-ratio:40/52;transform:translate(-50%,-100%);z-index:3}
+.vpin>svg{width:100%;height:100%;display:block;opacity:0;transform:translateY(-80px);filter:drop-shadow(0 6px 5px rgba(40,15,0,.45))}
+.vpin.drop>svg{animation:pinDrop .75s cubic-bezier(.3,1.5,.5,1) forwards}
+@keyframes pinDrop{0%{opacity:0;transform:translateY(-80px)}60%{opacity:1}100%{opacity:1;transform:none}}
+.vpin .ripple{position:absolute;left:50%;bottom:-8px;width:56px;height:20px;margin-left:-28px;border-radius:50%;border:2px solid rgba(165,29,23,.75);opacity:0}
+.vpin.drop .ripple{animation:ripple 1.6s ease-out .55s 2}
+@keyframes ripple{0%{opacity:.9;transform:scale(.3)}100%{opacity:0;transform:scale(2.2)}}
+.vlab{position:absolute;top:50%;left:calc(100% + 8px);transform:translateY(-62%);white-space:nowrap;text-align:left;
+  font-family:var(--f-caps);font-size:calc(14px * var(--s,1));letter-spacing:.16em;text-transform:uppercase;color:#3a1406;line-height:1.25;
+  padding:.45em .85em .5em;border-radius:8px;background:#fbf3df;border:1px solid rgba(122,74,18,.45);box-shadow:0 6px 14px rgba(50,20,0,.35);opacity:0;transition:opacity .5s .45s}
+.vlab b{display:block;font-family:'Ramabhadra',sans-serif;font-weight:400;font-size:1.12em;letter-spacing:0;text-transform:none;color:#a51d17}
+.vpin.drop .vlab{opacity:1}
+.vcard{position:absolute;z-index:2;width:min(64vw,250px);transform:translateY(-50%) translateY(14px);opacity:0;transition:opacity .6s,transform .6s var(--ease);
+  padding:.8em 1em .85em;border-radius:10px;background:rgba(251,243,223,.95);border:1px solid rgba(122,74,18,.4);box-shadow:0 8px 20px rgba(50,20,0,.3);text-align:center}
+.vcard.in{opacity:1;transform:translateY(-50%)}
+.vc-k{font-family:var(--f-caps);font-size:calc(11.5px * var(--s,1));letter-spacing:.2em;text-transform:uppercase;color:#a51d17}
+.vc-t{font-family:var(--f-display);font-size:calc(17px * var(--s,1));color:#2e1206;line-height:1.3;margin-top:.25em;text-wrap:balance}
+.vplane{position:absolute;width:calc(44px * var(--s,1));aspect-ratio:1;z-index:4;pointer-events:none;will-change:transform,left,top}
+.vplane svg{width:100%;height:100%;display:block}
+.vcompass{position:absolute;right:calc(14px + 0px);top:90px;width:calc(46px * var(--s,1));z-index:2;opacity:.9}
+.vj-after{margin-top:clamp(10px,2vh,20px);padding:0 20px;text-align:center;font-family:var(--f-display);font-size:clamp(17px,2.4vw,22px);color:#f6ead0;text-wrap:balance}
+.vj-after b{font-weight:400;color:#f0c46a}
+.vcard{width:min(52vw,220px);padding:.7em .8em .75em}
+.vlab i{display:block;font-family:var(--f-body,'EB Garamond',serif);font-style:italic;font-size:.95em;letter-spacing:.02em;text-transform:none;color:#5a3a1a;margin-top:.1em}
+
+/* ===== Round 11: envelope video opening ===== */
+.vgate{background:#2a0507;cursor:pointer;gap:0;display:block}
+.vg-back{position:absolute;inset:-40px;background:url('assets/video/opening-poster.jpg') center/cover;filter:blur(26px) brightness(.55);transform:scale(1.1)}
+.vg-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 45%;display:block;background:transparent}
+@media (min-aspect-ratio:3/4){.vg-vid{object-fit:contain;filter:drop-shadow(0 20px 50px rgba(0,0,0,.55))}}
+.vg-hint{position:absolute;left:50%;bottom:max(28px,calc(env(safe-area-inset-bottom) + 22px));transform:translateX(-50%);z-index:2;display:flex;align-items:center;gap:.7em;white-space:nowrap;
+  font-family:var(--f-caps);font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;color:#fbf0d6;padding:.85em 1.5em;border-radius:999px;
+  background:rgba(40,8,10,.72);border:1px solid rgba(240,211,142,.55);box-shadow:0 8px 24px rgba(0,0,0,.35);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  animation:fadeUp .7s var(--ease) .3s both;transition:opacity .4s}
+.vg-dot{width:8px;height:8px;border-radius:50%;background:#f0c46a;box-shadow:0 0 0 0 rgba(240,196,106,.7);animation:vgPulse 1.6s infinite}
+@keyframes vgPulse{70%{box-shadow:0 0 0 10px rgba(240,196,106,0)}100%{box-shadow:0 0 0 0 rgba(240,196,106,0)}}
+.vgate.playing .vg-hint{opacity:0}
+.vgate.done{opacity:0;transform:none;pointer-events:none;transition:opacity .9s ease}
+.vg-hint{left:0;right:0;margin:0 auto;width:max-content;max-width:calc(100% - 32px);transform:none}
+.vg-back{inset:0;filter:none;transform:none;background:radial-gradient(90% 70% at 50% 45%,#6d1418 0%,#4a0c10 45%,#260407 100%)}
+.vg-back::after{content:"";position:absolute;inset:0;background:url('assets/img/kalamkari.webp') center/520px;opacity:.07;mix-blend-mode:screen}
+@media (max-width:380px){.vg-hint{font-size:11px;letter-spacing:.18em;padding:.8em 1.2em}}
+/* Round 12: seamless hand-off — video ends on the hero background, overlay dissolves, then text arrives */
+.vgate.done{transition:opacity .5s ease}
+body.open .medal-hero{animation:medalIn 1.3s var(--ease) .45s forwards}
+body.open .h-fade{animation:fade 1s ease .8s forwards}
+body.open .n1{animation:nameIn 1.2s var(--ease) .95s forwards}
+body.open .amp{animation:fade 1s ease 1.25s forwards}
+body.open .n2{animation:nameIn 1.2s var(--ease) 1.35s forwards}
+body.open .tagline{animation:nameIn 1.1s var(--ease) 1.8s forwards}
+body.open .date-line{animation:fade 1.1s ease 2.05s forwards}
+body.open .scroll-cue{animation:fade 1s ease 2.5s forwards}
+
+/* hide the hint once playing (its entrance animation would otherwise keep it visible) */
+.vgate.playing .vg-hint{animation:none;opacity:0;transition:opacity .3s}
+/* full-width hero bands behind the video; on wide screens the video column dissolves into them at the end */
+.vg-back .band{position:absolute;left:0;right:0;opacity:0;transition:opacity .9s ease}
+.vg-back .band-top{top:0}.vg-back .band-bot{bottom:0}
+@media (min-aspect-ratio:3/4){
+  .vgate.ending .vg-back .band{opacity:1}
+  .vg-vid{transition:opacity .9s ease}
+  .vgate.ending .vg-vid{opacity:0}
+}
+.telugu.h-fade{opacity:0}
+/* Round 12b: no wait — text starts as the opening dissolves */
+body.open .medal-hero{animation:medalIn 1s var(--ease) 0s forwards}
+body.open .h-fade{animation:fade .8s ease .12s forwards}
+body.open .n1{animation:nameIn .95s var(--ease) .18s forwards}
+body.open .amp{animation:fade .7s ease .34s forwards}
+body.open .n2{animation:nameIn .95s var(--ease) .4s forwards}
+body.open .tagline{animation:nameIn .85s var(--ease) .65s forwards}
+body.open .date-line{animation:fade .8s ease .8s forwards}
+body.open .scroll-cue{animation:fade .8s ease 1.05s forwards}
+
+/* Round 12c: names printed on the card — they arrive with the card in the film, no separate reveal */
+body.film .hero-inner{z-index:120;transform-origin:50% 40%;will-change:transform,opacity}
+body.printed .hero-inner :is(.medal-hero,.h-fade,.nm,.amp,.tagline,.date-line){animation:none!important;opacity:1!important;transform:none!important}
+body.printed .telugu{opacity:.9!important}
+/* Round 13: script lettering for the journey title and the family sign-off (client asked for a font change) */
+.vj-title{display:block;font-family:var(--f-script);font-size:clamp(46px,12vw,84px);line-height:1.1;margin-top:.05em;letter-spacing:0}
+.vj-title span{background:linear-gradient(175deg,#fff0c4 8%,#e8bd6a 50%,#b5832f 95%);-webkit-background-clip:text;background-clip:text;color:transparent;padding:0 .06em}
+.vj-title i{font-family:var(--f-num);font-style:italic;font-size:.38em;color:#f0c46a;vertical-align:.35em;margin:0 .2em}
+.so-family{font-family:var(--f-script);font-size:clamp(46px,11vw,78px);line-height:1.15;color:var(--madder);margin:.05em 0 .5em;letter-spacing:0}
+.vlm{position:absolute;z-index:2;width:calc(132px * var(--s,1));margin:0;transform:translate(-50%,-50%);text-align:center;opacity:0;transition:opacity .8s ease}
+.vlm img{width:100%;height:auto;display:block;filter:drop-shadow(0 6px 6px rgba(60,30,0,.25))}
+.vlm figcaption{display:inline-block;margin-top:4px;font-family:var(--f-body);font-style:italic;font-size:calc(13px * var(--s,1));color:#4a2a10;background:rgba(251,243,223,.88);padding:.15em .6em;border-radius:6px;white-space:nowrap}
+.vlm.in{opacity:1}
+/* minimal wedding painting has no printed border: show it whole, couple centred */
+.ev-wedding .arch img{transform:none;object-position:50% 62%}
+/* optical centring of the script names (glyph slant pushes the ink right) */
+.nm,.amp{position:relative;left:-.06em}
+/* subtle scroll parallax uses the independent `translate` property so it never fights entrance animations */
+[data-par]{will-change:translate}
+.ev-wedding .arch img{transform:scale(1.1)}
+
+/* ===== Round 14: hero emblem + "Our Two Celebrations" single screen ===== */
+.deity{width:clamp(120px,30vw,190px);aspect-ratio:437/520;filter:drop-shadow(0 6px 18px rgba(0,0,0,.35)) drop-shadow(0 0 14px rgba(240,200,120,.18))}
+.deity img{width:100%;height:100%;display:block;object-fit:contain}
+.cities{position:relative;min-height:100vh;min-height:100svh;overflow:hidden;display:flex;justify-content:center;background:#8f2a1c;height:auto}
+.cities::before{display:none}
+.ct-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 100%;max-width:none}
+.cities::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(60,8,10,.55) 0%,rgba(60,8,10,.18) 38%,transparent 55%);pointer-events:none}
+.ct-inner{position:relative;z-index:2;text-align:center;max-width:640px;padding:clamp(64px,11vh,120px) 22px 0;color:#fbf0d6}
+.ct-eye{color:#f6d79a}.ct-eye span{color:#ffd9a8;font-family:var(--f-num);font-style:italic;letter-spacing:0;text-transform:none}
+.ct-title{font-family:var(--f-script);font-weight:400;font-size:clamp(48px,12vw,88px);line-height:1.08;margin:.12em 0 .18em;
+  background:linear-gradient(175deg,#fff4d6 10%,#f3cf86 55%,#d9a24a 95%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 10px rgba(60,10,0,.45));padding:0 .1em}
+.ct-line{font-family:var(--f-num);font-style:italic;font-size:clamp(18px,4.4vw,24px);line-height:1.45;color:#fff3dd;text-shadow:0 2px 10px rgba(60,10,0,.5);text-wrap:balance;max-width:28em;margin:0 auto}
+.ct-pair{display:flex;align-items:stretch;justify-content:center;gap:clamp(10px,3vw,26px);margin-top:clamp(22px,4vh,38px)}
+.ct-city{flex:1 1 0;max-width:240px;display:flex;flex-direction:column;align-items:center;gap:.25em;padding:.9em .7em 1em;border-radius:12px;text-decoration:none;
+  background:rgba(70,12,14,.42);border:1px solid rgba(246,215,154,.45);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);color:#fbf0d6}
+.ct-k{font-family:var(--f-caps);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#f6d79a}
+.ct-city b{font-family:var(--f-display);font-weight:400;font-size:clamp(22px,5.6vw,30px);line-height:1.15;color:#fff6e4}
+.ct-d{font-family:var(--f-num);font-style:italic;font-size:clamp(14px,3.6vw,17px);color:#fbe6c4;text-wrap:balance}
+.ct-sep{align-self:center;font-family:var(--f-num);font-size:clamp(26px,6vw,36px);color:#f6d79a;text-shadow:0 2px 8px rgba(60,10,0,.5)}
+@media (max-width:380px){.ct-pair{gap:8px}.ct-city{padding:.8em .5em .9em}}
+@media (max-height:520px) and (orientation:landscape){.ct-inner{padding-top:28px}.ct-title{font-size:44px}}
+@media (min-aspect-ratio:4/5){.ct-bg{object-position:50% 55%}.cities::after{background:linear-gradient(180deg,rgba(60,8,10,.5) 0%,rgba(60,8,10,.12) 45%,transparent 65%)}}
+/* Bapu-style paintings have no printed border: show nearly whole */
+.ev-art .arch img[src*="wedding"],.ev-art .arch img[src*="reception"]{transform:scale(1.04);object-position:50% 50%}
+/* breathing room between "Shiva · Shakthi" and the script names (Telugu line removed) */
+.hero-inner .eyebrow{margin:clamp(10px,1.6vh,16px) 0 clamp(14px,2.4vh,26px)}
+/* Round 14b: legible, evenly aligned city cards */
+.cities::after{background:linear-gradient(180deg,rgba(55,6,8,.62) 0%,rgba(55,6,8,.38) 34%,rgba(55,6,8,.14) 52%,transparent 64%)}
+.ct-inner{width:100%;max-width:560px;padding-left:20px;padding-right:20px}
+.ct-pair{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:clamp(8px,2.6vw,20px);width:100%;max-width:520px;margin-left:auto;margin-right:auto}
+.ct-city{max-width:none;min-width:0;justify-content:center;gap:.3em;padding:1em .6em 1.05em;border-radius:14px;
+  background:rgba(48,6,9,.7);border:1px solid rgba(246,215,154,.6);-webkit-backdrop-filter:blur(14px) saturate(1.1);backdrop-filter:blur(14px) saturate(1.1);
+  box-shadow:0 10px 26px rgba(40,4,6,.35),inset 0 0 0 1px rgba(255,235,200,.06)}
+.ct-k{font-size:clamp(10px,2.7vw,11.5px);letter-spacing:.2em;color:#f6d79a}
+.ct-city b{font-size:clamp(20px,5.4vw,28px);letter-spacing:.01em;color:#fff7e8;white-space:nowrap;text-shadow:0 2px 6px rgba(0,0,0,.35)}
+.ct-d{display:flex;flex-direction:column;align-items:center;font-size:clamp(14px,3.7vw,17px);line-height:1.35;color:#fbe8c8}
+.ct-d em{font-style:italic;color:#f6d79a}
+.ct-sep{font-size:clamp(24px,5.6vw,34px)}
+.ct-line{text-shadow:0 2px 12px rgba(40,4,6,.6)}
+@media (max-width:360px){.ct-city b{font-size:19px}.ct-pair{gap:6px}}
+@media (min-width:900px){.ct-inner{max-width:680px}.ct-pair{max-width:600px}.ct-city{padding:1.2em .9em 1.25em}.ct-city b{font-size:32px}.ct-d{font-size:18px}.ct-k{font-size:12px}.ct-line{font-size:24px}}
+/* Round 14c (portrait): painting flows BELOW the text — empty sky behind the words, lighthouse/hill/statue always clear of the cards */
+@media (max-aspect-ratio:4/5){
+  .cities{display:flex;flex-direction:column;align-items:center;min-height:0;background:#891f20}
+  .ct-inner{order:1;padding-bottom:0}
+  .ct-bg{order:2;position:relative;inset:auto;width:100%;height:auto;object-fit:fill;display:block;margin-top:calc(-100vw * 1.792 * .47)}
+  .cities::after{background:linear-gradient(180deg,rgba(55,6,8,.35) 0%,rgba(55,6,8,.18) 30%,transparent 48%)}
+}
+@media (max-aspect-ratio:4/5){.ct-bg{-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 14%);mask-image:linear-gradient(180deg,transparent 0,#000 14%)}}
+@media (min-aspect-ratio:4/5){.ct-bg{object-position:50% 47%}}
+@media (min-aspect-ratio:4/5){.cities{min-height:max(100svh,64vw)}.ct-bg{object-position:50% 62%}}
+@media (min-aspect-ratio:4/5){.cities{min-height:max(100svh,80vw)}.ct-bg{object-position:50% 58%}}
+
+/* ===== Round 15: living painting (boats + birds) and larger text on the celebrations screen ===== */
+.ct-art{position:absolute;left:0;top:0;width:100%;aspect-ratio:1000/1792;z-index:0;overflow:hidden}
+.ct-art .ct-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;margin:0;-webkit-mask-image:none;mask-image:none}
+@media (max-aspect-ratio:4/5){
+  .ct-art{order:2;position:relative;top:auto;margin-top:calc(-100vw * 1.792 * .47);-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 14%);mask-image:linear-gradient(180deg,transparent 0,#000 14%)}
+}
+.ct-boat{position:absolute;width:7.5%;height:auto;max-width:none;transform:translate(-50%,-88%);opacity:0;will-change:left,opacity,transform}
+.ct-boat.b1{top:72.2%;animation:sailR 42s linear infinite,bob 3.4s ease-in-out infinite}
+.ct-boat.b2{top:78.6%;width:8.5%;animation:sailL 54s linear -18s infinite,bob 3.9s ease-in-out -1s infinite}
+@keyframes sailR{0%{left:-6%;opacity:0}8%{opacity:1}88%{opacity:1}100%{left:47%;opacity:0}}
+@keyframes sailL{0%{left:50%;opacity:0}8%{opacity:1}88%{opacity:1}100%{left:-6%;opacity:0}}
+@keyframes bob{0%,100%{transform:translate(-50%,-88%) rotate(-1.6deg)}50%{transform:translate(-50%,-84%) rotate(1.6deg)}}
+.ct-boat.b2{scale:-1 1}
+.ct-bird{position:absolute;width:3%;left:-6%;opacity:0;will-change:left,top}
+.ct-bird svg{width:100%;height:auto;display:block;transform-origin:50% 60%;animation:flap .9s ease-in-out infinite}
+.ct-bird.w1{top:52%;animation:fly 34s linear infinite}
+.ct-bird.w2{top:54%;width:2.4%;animation:fly 34s linear -1.2s infinite}
+.ct-bird.w3{top:50.5%;width:2.2%;animation:fly 34s linear -2.1s infinite}
+.ct-bird.w4{top:57%;width:2.6%;animation:fly2 41s linear -16s infinite}
+.ct-bird.w5{top:58.5%;width:2%;animation:fly2 41s linear -17.4s infinite}
+.ct-bird.w2 svg{animation-delay:-.3s}.ct-bird.w3 svg{animation-delay:-.55s}.ct-bird.w5 svg{animation-delay:-.4s}
+@keyframes fly{0%{left:-6%;opacity:0;transform:translateY(0)}6%{opacity:.85}50%{transform:translateY(-14px)}94%{opacity:.85}100%{left:104%;opacity:0;transform:translateY(4px)}}
+@keyframes fly2{0%{left:104%;opacity:0;transform:scaleX(-1)}6%{opacity:.8}94%{opacity:.8}100%{left:-6%;opacity:0;transform:scaleX(-1) translateY(-10px)}}
+@keyframes flap{0%,100%{transform:scaleY(1)}50%{transform:scaleY(-.55)}}
+@media (prefers-reduced-motion:reduce){.ct-boat,.ct-bird,.ct-bird svg{animation:none!important}.ct-boat{opacity:1;left:22%}.ct-bird{display:none}}
+/* larger text (client: "text size needs to go up slightly") */
+.ct-eye{font-size:13.5px;letter-spacing:.32em}
+.ct-title{font-size:clamp(54px,13.6vw,96px)}
+.ct-line{font-size:clamp(19.5px,5vw,26px);line-height:1.42}
+.ct-pair{gap:clamp(6px,2vw,18px)}
+.ct-k{font-size:clamp(11px,2.9vw,12.5px)}
+.ct-city{padding:1.05em .5em 1.1em}
+.ct-city b{font-size:clamp(22px,6vw,30px)}
+.ct-d{font-size:clamp(15.5px,4.1vw,18px)}
+.ct-sep{font-size:clamp(22px,5vw,32px)}
+@media (max-width:370px){.ct-city b{font-size:20px}.ct-d{font-size:15px}}
+@media (min-width:900px){.ct-city b{font-size:34px}.ct-d{font-size:19px}.ct-line{font-size:26px}.ct-k{font-size:13px}}
+.ct-city b{font-size:clamp(20px,5.3vw,30px)}
+.ct-city{padding:1.05em .45em 1.1em}
+.ct-pair{gap:clamp(5px,1.6vw,18px)}
+@media (min-width:900px){.ct-city b{font-size:34px}}
+
+/* Round 15b: the painting itself is a gentle Kling loop (boats, birds, waves) — 9:16 frame */
+.ct-art{aspect-ratio:1080/1920}
+.ct-art .ct-bg{object-fit:cover;background:#891f20}
+@media (max-aspect-ratio:4/5){.ct-art{margin-top:calc(-100vw * 1.7778 * .47)}}
+
+/* ===== Round 15c: the painting comes alive with its own cut-out boats, birds and the lighthouse beam ===== */
+.ct-art .ct-bg{object-fit:fill}
+.pb{position:absolute;left:var(--x0);height:auto;max-width:none;will-change:left,transform,opacity;transform-origin:50% 90%}
+/* far boats: drift and rock in place */
+.pb.b1{animation:driftS 14s ease-in-out infinite alternate,rock 3.6s ease-in-out infinite}
+.pb.b2{animation:driftS 17s ease-in-out -6s infinite alternate,rock 4.1s ease-in-out -1.3s infinite}
+@keyframes driftS{from{left:calc(var(--x0) - 2.2%)}to{left:calc(var(--x0) + 2.2%)}}
+/* near boats: sail across the open water, fade in/out at the edges */
+.pb.b3{animation:sail3 38s linear -14s infinite,rock 3.2s ease-in-out infinite}
+.pb.b4{animation:sail4 46s linear -30s infinite,rock 3.8s ease-in-out -.8s infinite}
+@keyframes sail3{0%{left:4%;opacity:0}7%{opacity:1}90%{opacity:1}100%{left:58%;opacity:0}}
+@keyframes sail4{0%{left:-6%;opacity:0}7%{opacity:1}90%{opacity:1}100%{left:44%;opacity:0}}
+@keyframes rock{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6%) rotate(2deg)}}
+/* lighthouse: soft lamp glow + sweeping beam */
+.lh-glow{position:absolute;left:61.2%;top:58.75%;width:9%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(circle,rgba(255,244,200,.95) 0,rgba(255,214,120,.55) 28%,rgba(255,190,90,0) 70%);mix-blend-mode:screen;animation:lamp 3s ease-in-out infinite}
+@keyframes lamp{0%,100%{opacity:.55;transform:translate(-50%,-50%) scale(.85)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}}
+.lh-beam{position:absolute;left:61.2%;top:58.75%;width:46%;height:5%;transform-origin:0 50%;mix-blend-mode:screen;pointer-events:none;
+  background:linear-gradient(90deg,rgba(255,240,190,.75),rgba(255,225,160,.25) 55%,rgba(255,220,150,0));
+  clip-path:polygon(0 44%,100% 0,100% 100%,0 56%);animation:sweep 7s linear infinite}
+@keyframes sweep{0%{transform:translateY(-50%) scaleX(1);opacity:.85}25%{transform:translateY(-50%) scaleX(.04);opacity:.25}50%{transform:translateY(-50%) scaleX(-1);opacity:.7}75%{transform:translateY(-50%) scaleX(-.04);opacity:.25}100%{transform:translateY(-50%) scaleX(1);opacity:.85}}
+@media (prefers-reduced-motion:reduce){.pb,.lh-glow,.lh-beam{animation:none!important}.pb{opacity:1}.lh-beam{display:none}}
+.pb.b3{animation:sail3 42s linear -6s infinite,rock 3.2s ease-in-out infinite}
+.pb.b4{animation:sail4 42s linear -27s infinite,rock 3.8s ease-in-out -.8s infinite}
+
+/* ===== Round 15d: moving water + fewer, natural birds ===== */
+.ct-bird{display:none}
+.sea{position:absolute;left:0;top:66.198%;width:100%;height:auto;max-width:none;pointer-events:none;will-change:transform}
+.sea.s1{animation:seaA 7s ease-in-out infinite alternate}
+.sea.s2{opacity:.5;animation:seaB 5.3s ease-in-out -2s infinite alternate}
+@keyframes seaA{from{transform:translate(-1.1%,0)}to{transform:translate(1.1%,.35%)}}
+@keyframes seaB{from{transform:translate(1.3%,.3%)}to{transform:translate(-1.3%,-.1%)}}
+.pb,.lh-glow,.lh-beam{z-index:2}
+/* birds: a pair and a loner; a few wingbeats then a glide, on a gently rising/dipping path */
+.bd{position:absolute;z-index:3;left:-8%;width:2.6%;opacity:0;will-change:left,transform}
+.bd-b{display:block;animation:flapGlide 3.2s ease-in-out infinite}
+.bd-b svg{width:100%;height:auto;display:block}
+.bd.k1{top:51%;animation:birdPath 30s linear infinite}
+.bd.k2{top:52.6%;width:2.1%;animation:birdPath 30s linear -.9s infinite}
+.bd.k2 .bd-b{animation-delay:-.45s}
+.bd.k3{top:56%;width:2.2%;animation:birdPath2 37s linear -14s infinite}
+.bd.k3 .bd-b{animation-delay:-1.6s;animation-duration:3.8s}
+@keyframes flapGlide{0%{transform:scaleY(1)}7%{transform:scaleY(-.35)}14%{transform:scaleY(1)}21%{transform:scaleY(-.35)}28%{transform:scaleY(1)}35%{transform:scaleY(-.3)}42%,100%{transform:scaleY(.9)}}
+@keyframes birdPath{0%{left:-8%;opacity:0;transform:translateY(0)}5%{opacity:.9}25%{transform:translateY(-60%)}50%{transform:translateY(40%)}75%{transform:translateY(-30%)}95%{opacity:.9}100%{left:106%;opacity:0;transform:translateY(0)}}
+@keyframes birdPath2{0%{left:106%;opacity:0;transform:scaleX(-1) translateY(0)}5%{opacity:.85}35%{transform:scaleX(-1) translateY(-50%)}70%{transform:scaleX(-1) translateY(30%)}95%{opacity:.85}100%{left:-8%;opacity:0;transform:scaleX(-1) translateY(0)}}
+@media (prefers-reduced-motion:reduce){.sea,.bd,.bd-b{animation:none!important}.bd{display:none}}
+
+/* ===== Round 15e: real bird silhouettes (4-frame wingbeat flipbook) + moon beside the title ===== */
+.bd{width:3.4%}
+.bd.k2{width:2.8%}.bd.k3{width:3%}
+.bd-b{display:block;width:100%;aspect-ratio:2/1;background:url('assets/img/bird-sheet.webp') 0 0/400% 100% no-repeat;animation:wings 2.6s step-end infinite}
+.bd.k2 .bd-b{animation-delay:-.7s}
+.bd.k3 .bd-b{animation-duration:3.1s;animation-delay:-1.9s}
+@keyframes wings{0%{background-position:0 0}6%{background-position:33.333% 0}12%{background-position:66.667% 0}18%{background-position:33.333% 0}24%{background-position:0 0}30%{background-position:33.333% 0}36%{background-position:66.667% 0}42%{background-position:33.333% 0}48%{background-position:0 0}54%,100%{background-position:33.333% 0}}
+@keyframes birdPath{0%{left:-8%;opacity:0;transform:translateY(0) rotate(0)}5%{opacity:.92}22%{transform:translateY(-55%) rotate(-4deg)}48%{transform:translateY(35%) rotate(3deg)}74%{transform:translateY(-25%) rotate(-3deg)}95%{opacity:.92}100%{left:106%;opacity:0;transform:translateY(0) rotate(0)}}
+@keyframes birdPath2{0%{left:106%;opacity:0;transform:scaleX(-1) translateY(0) rotate(0)}5%{opacity:.88}35%{transform:scaleX(-1) translateY(-45%) rotate(-4deg)}70%{transform:scaleX(-1) translateY(25%) rotate(3deg)}95%{opacity:.88}100%{left:-8%;opacity:0;transform:scaleX(-1) translateY(0) rotate(0)}}
+.ct-inner{position:relative}
+.ct-moon{position:absolute;top:clamp(26px,5.2vh,62px);right:clamp(10px,5vw,40px);width:clamp(26px,7.4vw,44px);height:auto;opacity:.95;pointer-events:none;
+  filter:drop-shadow(0 0 8px rgba(255,236,190,.55));animation:moonGlow 6s ease-in-out infinite}
+@keyframes moonGlow{0%,100%{filter:drop-shadow(0 0 6px rgba(255,236,190,.4))}50%{filter:drop-shadow(0 0 12px rgba(255,236,190,.75))}}
+@media (prefers-reduced-motion:reduce){.bd-b,.ct-moon{animation:none!important}}
+
+/* ===== Round 15f: natural water — the painted sea rolls row by row (24 bands, staggered swell) ===== */
+.sea{display:none}
+.waves{position:absolute;left:0;top:66.198%;width:100%;height:33.802%;pointer-events:none}
+.waves i{position:absolute;left:0;width:100%;height:calc(100% / 24);top:calc(var(--i) * 100% / 24);
+  background:url('assets/img/sea-vw17.webp') no-repeat;background-size:100% 2400%;background-position:0 calc(var(--i) * 100% / 23);
+  animation:swell 4.6s ease-in-out infinite;animation-delay:calc(var(--i) * -.32s);will-change:transform}
+.waves i:nth-child(even){animation-name:swell2}
+@keyframes swell{0%,100%{transform:translate(-.35%,0)}50%{transform:translate(.35%,-16%)}}
+@keyframes swell2{0%,100%{transform:translate(.35%,-4%)}50%{transform:translate(-.35%,-18%)}}
+@media (prefers-reduced-motion:reduce){.waves i{animation:none!important}}
+
+/* ===== Round 16: reveal-style opening (client: no window-style card opening) ===== */
+.vgate.iris{--r:0px;-webkit-mask-image:radial-gradient(circle at 50% 46%,transparent var(--r),#000 calc(var(--r) + 90px));mask-image:radial-gradient(circle at 50% 46%,transparent var(--r),#000 calc(var(--r) + 90px));transition:none;opacity:1}
+.iris-ring{--r:0px;position:fixed;inset:0;z-index:101;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 46%,transparent calc(var(--r) - 6px),rgba(255,222,150,.42) calc(var(--r) + 34px),rgba(255,222,150,.12) calc(var(--r) + 70px),transparent calc(var(--r) + 110px))}
+#hero{transform-origin:50% 46%;will-change:transform}
+body.printed .hero-inner{opacity:1!important;transform:none!important;clip-path:none!important}
+/* "Shiva · Shakthi" lettering removed: keep the emblem-to-names spacing balanced */
+.hero-inner .deity{margin-bottom:clamp(16px,2.8vh,30px)}
+
+/* ===== Round 17: two-sided painting — Vizag (left, wedding) | Warangal (right, reception) ===== */
+@media (max-aspect-ratio:4/5){.ct-art{margin-top:calc(-100vw * 1.7778 * .385)}}
+.waves{top:64.375%;height:35.625%}
+.lh-glow{left:8.8%;top:52.97%;width:8%}
+.lh-beam{left:8.8%;top:52.97%;width:52%}
+.pb.b1{animation:driftS 15s ease-in-out infinite alternate,rock 3.6s ease-in-out infinite}
+.pb.b2{animation:sailN 30s ease-in-out infinite alternate,rock 3.3s ease-in-out -.9s infinite}
+.pb.b3{animation:driftS 18s ease-in-out -7s infinite alternate,rock 4s ease-in-out -1.6s infinite}
+@keyframes sailN{from{left:3%}to{left:21%}}
+@keyframes driftS{from{left:calc(var(--x0) - 1.8%)}to{left:calc(var(--x0) + 1.8%)}}
+.bd.k1{top:40.5%}.bd.k2{top:41.8%}.bd.k3{top:42.6%}
+
+/* seamless wave bands: px-exact sizing (set from JS) + 2px overlap so no hairline can show between strips */
+.waves i{height:calc(var(--lh,300px) / 24 + 2px);top:calc(var(--i) * var(--lh,300px) / 24 - 1px);background-size:100% var(--lh,300px);background-position:0 calc(var(--i) * var(--lh,300px) / -24 + 1px)}
+
+/* ===== Round 18: compositor-smooth reveal (clip-path circle on the invitation + scaling gold halo) ===== */
+.vgate.iris{-webkit-mask-image:none;mask-image:none}
+.iris-ring{display:none}
+#hero{will-change:auto}
+#hero.iris-from{position:relative;z-index:102;-webkit-clip-path:circle(0px at 50% 46%);clip-path:circle(0px at 50% 46%)}
+#hero.iris-to{-webkit-clip-path:circle(var(--R) at 50% 46%);clip-path:circle(var(--R) at 50% 46%);
+  transition:clip-path 1.7s cubic-bezier(.65,0,.3,1),-webkit-clip-path 1.7s cubic-bezier(.65,0,.3,1)}
+.iris2{position:fixed;left:50%;top:46%;width:calc(var(--R) * 2);height:calc(var(--R) * 2);margin:calc(var(--R) * -1) 0 0 calc(var(--R) * -1);z-index:103;pointer-events:none;border-radius:50%;
+  border:2px solid rgba(255,226,160,.85);box-shadow:0 0 18px 4px rgba(255,214,130,.55),inset 0 0 18px 4px rgba(255,214,130,.45);
+  transform:scale(.001);opacity:0;will-change:transform,opacity}
+.iris2.on{opacity:1}
+.iris2.go{transform:scale(1);opacity:0;transition:transform 1.7s cubic-bezier(.65,0,.3,1),opacity 1.7s cubic-bezier(.6,0,.9,.4)}
+/* new scroll cue: label + slim gold line with a gliding bead */
+.scroll-cue.sc2{display:flex;flex-direction:column;align-items:center;gap:8px;padding:6px 14px;background:none;border:0;cursor:pointer;color:var(--gold-l)}
+.sc2 .sc-t{font-family:var(--f-caps);font-size:11px;letter-spacing:.34em;text-transform:uppercase;padding-left:.34em;color:#f3dca8}
+.sc2 .sc-line{position:relative;width:1px;height:38px;background:linear-gradient(180deg,rgba(243,220,168,.15),rgba(243,220,168,.6));overflow:visible}
+.sc2 .sc-line i{position:absolute;left:50%;top:0;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#f6d99a;box-shadow:0 0 8px 2px rgba(246,217,154,.7);animation:scBead 2.2s cubic-bezier(.6,0,.4,1) infinite}
+@keyframes scBead{0%{transform:translateY(0);opacity:0}15%{opacity:1}80%{opacity:1}100%{transform:translateY(34px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.sc2 .sc-line i{animation:none;top:16px}}
+.iris2{border:0;box-shadow:none;background:radial-gradient(circle,transparent 66%,rgba(255,226,160,.0) 67%,rgba(255,222,150,.75) 70.2%,rgba(255,214,130,.25) 72%,transparent 75%)}
+.iris2.go{transition:transform 1.7s cubic-bezier(.65,0,.3,1),opacity 1.7s cubic-bezier(.7,0,.95,.3)}
+.iris2{width:calc(var(--R) * 2 / .702);height:calc(var(--R) * 2 / .702);margin:calc(var(--R) * -1 / .702) 0 0 calc(var(--R) * -1 / .702)}
+.iris2{background:radial-gradient(circle,transparent 64.5%,rgba(255,222,150,.28) 67.5%,rgba(255,226,160,.85) 69.9%,rgba(255,214,130,.35) 70.6%,transparent 71.4%)}
+.iris2{background:radial-gradient(circle closest-side,transparent 64.5%,rgba(255,222,150,.28) 67.5%,rgba(255,226,160,.85) 69.9%,rgba(255,214,130,.35) 70.6%,transparent 71.4%)}
+
+/* ===== Round 18b: continuous scroll flow ===== */
+.flow{position:absolute;left:0;top:0;width:100%;pointer-events:none;z-index:6;overflow:hidden}
+.fl-sprig{position:absolute;width:clamp(96px,26vw,210px);height:auto;margin-top:calc(clamp(96px,26vw,210px) * -.55);will-change:translate,rotate,opacity;filter:drop-shadow(0 6px 8px rgba(60,20,0,.18))}
+.fl-sprig.l{left:clamp(-34px,-4vw,-10px);transform-origin:0 100%}
+.fl-sprig.r{right:clamp(-34px,-4vw,-10px);transform:scaleX(-1);transform-origin:100% 100%}
+.fl-garland{position:absolute;width:clamp(30px,7.5vw,56px);height:auto;margin-top:2px;will-change:translate,opacity;transform-origin:50% 0;animation:garSway 6s ease-in-out infinite}
+.fl-garland.l{left:clamp(10px,5vw,60px)}
+.fl-garland.r{right:clamp(10px,5vw,60px);animation-delay:-3s}
+@keyframes garSway{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.6deg)}}
+.fl-petals{position:fixed;inset:0;z-index:5;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.flow,.fl-petals{display:none}}
+@media (max-width:760px){.fl-garland{display:none}}
+
+/* ===== Round 19: feathered, almost seamless reveal (no hard circle) ===== */
+#hero.bloom-from{position:relative;z-index:102;
+  -webkit-mask-image:radial-gradient(circle closest-side,#000 0%,#000 30%,rgba(0,0,0,.55) 58%,rgba(0,0,0,.18) 80%,transparent 100%);mask-image:radial-gradient(circle closest-side,#000 0%,#000 30%,rgba(0,0,0,.55) 58%,rgba(0,0,0,.18) 80%,transparent 100%);
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:50% 46%;mask-position:50% 46%;
+  -webkit-mask-size:0% 0%;mask-size:0% 0%;opacity:.35}
+#hero.bloom-to{-webkit-mask-size:900% 900%;mask-size:900% 900%;opacity:1;
+  transition:-webkit-mask-size 2.1s cubic-bezier(.4,0,.2,1),mask-size 2.1s cubic-bezier(.4,0,.2,1),opacity 1.2s ease-out}
+.vgate.dissolve{transition:opacity 1.6s ease .35s,filter 1.6s ease .2s;opacity:0;filter:blur(6px) brightness(1.08)}
+/* right-hand sprig uses a pre-mirrored image (no CSS flip, which pushed it off-screen) */
+.fl-sprig.r{transform:none;transform-origin:100% 100%}
+
+/* sacred turmeric thread */
+.fl-thread{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+.th-line{fill:none;stroke:#e9b232;stroke-width:1.7;stroke-linecap:round}
+.th-glow{fill:none;stroke:rgba(255,206,110,.35);stroke-width:6;stroke-linecap:round;filter:blur(2px)}
+.th-bead{fill:#ffd36b;filter:drop-shadow(0 0 5px rgba(255,200,90,.95));transition:opacity .3s}
+/* QC fix: scroll cue lives in the hero's normal flow (never on top of the text) and fades on first scroll */
+.scroll-cue.sc2{position:relative;left:auto;bottom:auto;transform:none;align-self:center;margin:0 auto clamp(14px,2.4vh,26px);z-index:3}
+.hero-inner{padding-bottom:clamp(18px,3vh,36px)}
+body.open .scroll-cue.sc2{animation:none;opacity:1;transition:opacity .25s}
+/* client: the turmeric thread looks blunt — removed */
+.fl-thread{display:none}
+/* garlands only where they hang clear of the heading */
+@media (max-width:1100px){.fl-garland{display:none}}
+.events > .eyebrow{display:block;margin-bottom:clamp(10px,1.6vh,16px)}
+/* client: remove the gold scroll line — keep only a quiet floating label */
+.sc2 .sc-line{display:none}
+.sc2 .sc-t{animation:scFloat 2.4s ease-in-out infinite}
+@keyframes scFloat{0%,100%{transform:translateY(0);opacity:.75}50%{transform:translateY(5px);opacity:1}}
+@media (prefers-reduced-motion:reduce){.sc2 .sc-t{animation:none}}
+/* restore the small scroll line under the label (only the long page thread is removed) */
+.sc2 .sc-line{display:block}
+.sc2 .sc-t{animation:none;opacity:1;transform:none}
+
+/* ===== Round 21: subtle motion in the cards ===== */
+.alive{--tilt:0deg;transform:perspective(1200px) rotateX(var(--tilt));transition:transform .5s cubic-bezier(.2,.7,.2,1);animation:breathe 7s ease-in-out var(--d,0s) infinite}
+@keyframes breathe{0%,100%{translate:0 0;box-shadow:0 30px 60px rgba(61,10,14,.30)}50%{translate:0 -4px;box-shadow:0 38px 70px rgba(61,10,14,.38)}}
+.ct-city.alive,.count .cd.alive{animation-name:breatheLite}
+@keyframes breatheLite{0%,100%{translate:0 0}50%{translate:0 -3px}}
+.alive{position:relative}
+.sheen-wrap{position:absolute;inset:0;overflow:hidden;border-radius:inherit;pointer-events:none;z-index:4}
+.alive .sheen{position:absolute;inset:-20% auto -20% -60%;width:38%;pointer-events:none;mix-blend-mode:soft-light;
+  background:linear-gradient(100deg,transparent 0,rgba(255,236,190,.0) 20%,rgba(255,236,190,.55) 50%,rgba(255,236,190,0) 80%,transparent 100%);
+  transform:skewX(-14deg);animation:sheen 9s ease-in-out var(--d,0s) infinite}
+@keyframes sheen{0%,62%{left:-60%}88%,100%{left:125%}}
+@media (prefers-reduced-motion:reduce){.alive,.alive .sheen{animation:none!important;transform:none!important}}
+
+/* no flash on tap: the still first frame sits under the video; the video becomes visible only once frames are drawing */
+.vg-still{z-index:0}
+#gvid{z-index:1;opacity:0}
+.vgate.vplaying #gvid{opacity:1}
+.vg-hint{z-index:3}
+/* fallback if a phone refuses to prime: the video fades in over the identical still instead of popping */
+#gvid{transition:opacity .6s ease}
+
+/* sheen lives inside the painting arches only */
+.ev-art .arch{position:relative}
+/* sprigs: fully on-screen, stems feathered into the page so nothing looks cut */
+.fl-sprig{will-change:scale,rotate,opacity,filter}
+.fl-sprig.l{left:0;transform-origin:0% 80%;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%);mask-image:linear-gradient(90deg,transparent 0,#000 22%)}
+.fl-sprig.r{right:0;transform-origin:100% 80%;-webkit-mask-image:linear-gradient(270deg,transparent 0,#000 22%);mask-image:linear-gradient(270deg,transparent 0,#000 22%)}
+/* still under the video lifted by the ~2.5% browsers add when playing video, so the hand-over is invisible */
+.vg-still{filter:brightness(1.026)}
+
+/* ===== Round 23: Woven Bold SS monogram (tall 345.8 x 400) ===== */
+.medal-mono{width:38%;height:44%;margin-top:0}
+.so-mono{width:clamp(70px,14vw,104px);height:clamp(81px,16.2vw,120px)}
+.bindu{display:none!important}
+
+/* ===== Round 24: one continuous opening film (ribbon -> envelope unfolds -> bare maroon card), soft hand-off, names write in ===== */
+.vgate.soft{opacity:0;filter:none;transition:opacity .9s ease;pointer-events:none}
+body.open.r24 .medal-hero{animation:medalIn 1.5s var(--ease) .35s forwards}
+body.open.r24 .h-fade{animation:fade 1.1s ease .6s forwards}
+body.open.r24 .n1{animation:nameIn 1.4s var(--ease) .8s forwards}
+body.open.r24 .amp{animation:fade 1.1s ease 1.2s forwards}
+body.open.r24 .n2{animation:nameIn 1.4s var(--ease) 1.3s forwards}
+body.open.r24 .tagline{animation:nameIn 1.2s var(--ease) 1.8s forwards}
+body.open.r24 .date-line{animation:fade 1.1s ease 2.1s forwards}
+body.open.r24:not(.r24done) .scroll-cue.sc2{transition:opacity 1s ease 2.5s}
+@media (prefers-reduced-motion:reduce){.vgate.soft{transition-duration:.4s}}
+
+/* ===== Round 28: ribbon film -> envelope opens -> maroon card, seamless hand-off ===== */
+:root{--fx:1;--fy:1}
+.hero>.band,.vg-back .band{height:calc(46px * var(--fy));background-size:calc(432.4px * var(--fx)) 100%;box-shadow:0 calc(2px * var(--fy)) 0 #c58b2c,0 calc(-2px * var(--fy)) 0 #c58b2c}
+.vgate .vg-vid{object-position:50% 50%;filter:none;-webkit-mask-image:none;mask-image:none}
+.vgate[data-fit=cover] .vg-vid{object-fit:cover}
+.vgate[data-fit=fill] .vg-vid{object-fit:fill}
+.vgate[data-fit=contain] .vg-vid{object-fit:contain}
+.vgate.ending .vg-back .band{opacity:1}
+.vgate.ending.vplaying #gvid,.vgate.ending .vg-vid{opacity:1}
+@media (min-aspect-ratio:3/4){.vgate[data-fit=contain] .vg-vid{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 30%,#000 70%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 30%,#000 70%,transparent 100%)}}
+.vgate .vg-still{filter:brightness(1.026)}
+
+/* Round 28c: quick names - start as the card settles, all in within ~1.8s */
+.vgate.soft{transition:opacity .55s ease}
+body.open.r24 .medal-hero{animation:medalIn 1s var(--ease) .05s forwards}
+body.open.r24 .h-fade{animation:fade .8s ease .2s forwards}
+body.open.r24 .n1{animation:nameIn 1s var(--ease) .2s forwards}
+body.open.r24 .amp{animation:fade .8s ease .45s forwards}
+body.open.r24 .n2{animation:nameIn 1s var(--ease) .5s forwards}
+body.open.r24 .tagline{animation:nameIn .9s var(--ease) .8s forwards}
+body.open.r24 .date-line{animation:fade .8s ease 1s forwards}
+body.open.r24:not(.r24done) .scroll-cue.sc2{transition:opacity .8s ease 1.4s}
+.vgate .vg-back{z-index:0}.vgate .vg-vid{z-index:1}.vgate .vg-hint{z-index:3}
+
+/* Round 28g: names ride on the card inside the film */
+.vgate .ov-wrap{position:absolute;inset:0;z-index:3;pointer-events:none;visibility:hidden}
+.vgate .ov-hero{position:absolute;inset:0;min-height:0;height:100%;background:none!important;will-change:transform}
+.vgate .ov-hero::before,.vgate .ov-hero::after{display:none!important}
+.vgate .ov-hero .band,.vgate .ov-hero .scroll-cue{visibility:hidden!important}
+.vgate.soft{transition:opacity 1s ease}
+.vgate .vg-hint{z-index:5}
+.vgate.soft{transition:opacity 1.4s cubic-bezier(.4,0,.2,1)}
+.vgate.fast.soft{transition-duration:.7s}
+html:has(body.locked){overflow:hidden}body.locked{overflow:hidden;touch-action:none}
